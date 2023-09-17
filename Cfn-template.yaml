@@ -1,0 +1,52 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: |
+  This is my Cfn template for EC2 with Security Group
+
+Resources:
+  AbdullahInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-01c647eace872fc02
+      InstanceType: t2.micro
+      KeyName: firstkey
+      UserData: 
+        Fn::Base64: |
+          #! /bin/bash
+          yum update -y
+          yum install -y python3-pip
+          git clone https://github.com/abdullahyalcin/001-roman-numerals-converter.git /home/ec2-user/roman-numerals-converter-project
+          cd /home/ec2-user/roman-numerals-converter-project
+          /usr/local/bin/python3 -m pip install -r requirements.txt  
+          /usr/local/bin/python3 roman_converter.py
+      SecurityGroups: 
+        - !Ref ApoInstanceSG
+      Tags: 
+        - Key: Name
+          Value: ApoCFNInstance
+        - Key: Environment
+          Value: Dev    
+  ApoInstanceSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allows SSH and HTTP # Required
+      SecurityGroupIngress: 
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0       
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+
+Outputs:
+  WebSiteURL:
+    Description: This output gives the URL of EC2
+    Value: !Sub 
+      - http://${PublicAddress}
+      - PublicAddress: !GetAtt AbdullahInstance.PublicDnsName
+     
