@@ -11,13 +11,14 @@ Resources:
       KeyName: firstkey
       UserData: 
         Fn::Base64: |
-          #! /bin/bash
+          #!/bin/bash
           yum update -y
           yum install -y python3-pip
-          git clone https://github.com/abdullahyalcin/001-roman-numerals-converter.git /home/ec2-user/roman-numerals-converter-project
-          cd /home/ec2-user/roman-numerals-converter-project
-          /usr/local/bin/python3 -m pip install -r requirements.txt  
-          /usr/local/bin/python3 roman_converter.py
+          git clone https://github.com/abdullahyalcin/001-roman-numerals-converter.git /home/ec2-user/001-roman-numerals-converter
+          cd /home/ec2-user/001-roman-numerals-converter
+          python3 -m pip install -r requirements.txt
+          python3 roman-numerals-converter-app.py
+
       SecurityGroups: 
         - !Ref ApoInstanceSG
       Tags: 
